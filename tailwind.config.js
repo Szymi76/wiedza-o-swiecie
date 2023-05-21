@@ -15,6 +15,12 @@ module.exports = {
           left: "50%",
           transform: "translate(-50%,-50%)",
         },
+        ".primary-layout": {
+          backgroundColor: "rgba(31, 41, 55, 0.9)",
+          borderRadius: "0.5rem",
+          padding: "1rem",
+          color: "white",
+        },
       });
     }),
   ],
