@@ -1,12 +1,14 @@
 import { Country } from "@/types";
 import clsx from "clsx";
 import Image from "next/image";
+import Link from "next/link";
 import CountUp from "react-countup";
+import { TailSpin } from "react-loader-spinner";
 
 type CountryHalfSlideProps = { country: Country; showPopulation: boolean; onClick: () => void };
 export function CountryHalfSlide(props: CountryHalfSlideProps) {
   return (
-    <div className="h-full w-1/2 relative group cursor-pointer" onClick={props.onClick}>
+    <div className="h-full w-full lg:w-1/2 relative group cursor-pointer" onClick={props.onClick}>
       <Image
         src={props.country.flags.svg}
         height={100}
@@ -41,8 +43,35 @@ export function Button(props: ButtonProps) {
     <button
       {...buttonProps}
       className={clsx(
-        "bg-white px-6 py-3 rounded-lg flex gap-3 items-center justify-center text-black font-bold w-full hover:scale-[.97] active:scale-[.94] focus:scale-[.94] duration-100 outline-none",
+        "bg-white px-3 lg:px-6 py-3 rounded-lg flex gap-3 items-center justify-center text-black font-bold w-full hover:scale-[.97] active:scale-[.94] focus:scale-[.94] duration-100 outline-none",
         className
       )}></button>
+  );
+}
+
+export function LoadingPage() {
+  return (
+    <div className="h-screen w-full bg-gray-800 flex justify-center pt-20">
+      <div className="flex gap-5">
+        <h2 className="font-bold text-3xl text-white">Ładowanie gry </h2>
+        <TailSpin color="white" height={40} width={40} />
+      </div>
+    </div>
+  );
+}
+
+export function ErrorPage() {
+  return (
+    <div className="h-screen w-full bg-gray-800 flex justify-center pt-20">
+      <div className="flex flex-col gap-5 w-[500px] max-w-[90%]">
+        <h2 className="font-bold text-3xl text-white text-center">Coś poszło nie tak podczas ładowania gry 😔</h2>
+        <p className="text-medium text-gray-400">
+          Spróbuj odświerzyć przeglądarkę, jeśli to nie pomoże to wyłącz i włącz ją na nowo.
+        </p>
+        <Link href="/">
+          <Button>Wróć do przeglądania gier</Button>
+        </Link>
+      </div>
+    </div>
   );
 }

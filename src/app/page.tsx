@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import GithubLogo from "../../public/github-logo.svg";
 import Image from "next/image";
@@ -21,7 +23,10 @@ export default function Page() {
         </div>
       </main>
       <footer className="absolute bottom-0 left-0 border-t border-gray-600 flex justify-end w-full p-2">
-        <Link href="/" className="bg-white rounded-full border border-white">
+        <Link
+          href="https://github.com/Szymi76/wiedza-o-swiecie"
+          target="_blank"
+          className="bg-white rounded-full border border-white">
           <Image src={GithubLogo.src} height={35} width={35} alt="Github logo" />
         </Link>
       </footer>
