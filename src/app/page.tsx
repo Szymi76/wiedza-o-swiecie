@@ -3,7 +3,7 @@
 import Link from "next/link";
 import GithubLogo from "../../public/github-logo.svg";
 import Image from "next/image";
-import { Button } from "./wieksza-populacja/components";
+import Button from "@/components/shared/Button";
 
 export default function Page() {
   return (

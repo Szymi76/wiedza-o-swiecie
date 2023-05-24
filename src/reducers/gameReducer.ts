@@ -6,10 +6,14 @@ type GameState = {
   bestScore: number;
   isCurrentScoreNewBest: boolean;
   isGameEnded: boolean;
+  isGameHasBeenWon: boolean;
   gameNumber: number;
 };
 
-type GameActions = { type: "add-one-point" } | { type: "end-game" } | { type: "play-again" };
+type GameActions =
+  | { type: "add-one-point" }
+  | { type: "end-game"; payload: { hasBeenWon: boolean } }
+  | { type: "play-again" };
 
 const createLSBestScoreKey = (gameName: string) => `${gameName}__best-score`;
 
@@ -31,6 +35,7 @@ export function createInitialGameState(gameName: string): GameState {
     bestScore,
     isCurrentScoreNewBest: false,
     isGameEnded: false,
+    isGameHasBeenWon: false,
     gameNumber: 1,
   };
 }
@@ -50,12 +55,14 @@ export const gameReducer = produce((draft: Draft<GameState>, action: GameActions
     }
     case "end-game": {
       draft.isGameEnded = true;
+      draft.isGameHasBeenWon = action.payload.hasBeenWon;
       break;
     }
     case "play-again": {
       draft.currentScore = 0;
       draft.gameNumber = draft.gameNumber + 1;
       draft.isGameEnded = false;
+      draft.isGameHasBeenWon = false;
       break;
     }
   }

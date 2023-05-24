@@ -13,11 +13,14 @@ import ArrowLongLeftIcon from "@heroicons/react/24/solid/ArrowLongLeftIcon";
 import ArrowUturnRightIcon from "@heroicons/react/24/solid/ArrowUturnRightIcon";
 import FocusTrap from "focus-trap-react";
 import Link from "next/link";
-import { Button, CountryHalfSlide, ErrorPage, LoadingPage } from "./components";
+import { CountryHalfSlide } from "./components";
 import sleep from "@/utils/sleep";
 import { generateRandomCountriesPairs } from "./utils";
 import { useImmerReducer } from "use-immer";
-import { createInitialGameState, gameReducer } from "@/gameReducer";
+import { createInitialGameState, gameReducer } from "@/reducers/gameReducer";
+import LoadingPageLayout from "@/layouts/LoadingPageLayout";
+import ErrorPageLayout from "@/layouts/ErrorPageLayout";
+import Button from "@/components/shared/Button";
 
 const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).then((res) => res.json());
 
@@ -30,25 +33,36 @@ export default function HigherPopulation() {
   const swiperRef = useRef<SwiperRef>(null);
   const { pairs } = useMemo(() => generateRandomCountriesPairs(data ?? []), [data, gameState.gameNumber]);
 
-  const handleCountryClick = useCallback(async (pair: [Country, Country], clicked: "first" | "second") => {
-    if (gameState.isGameEnded) return;
-    setShowPopulation(true);
+  const handleCountryClick = useCallback(
+    async (pair: [Country, Country], clicked: "first" | "second", index: number) => {
+      if (gameState.isGameEnded) return;
+      setShowPopulation(true);
 
-    if (
-      (clicked == "first" && pair[0].population < pair[1].population) ||
-      (clicked == "second" && pair[1].population < pair[0].population)
-    ) {
-      dispatch({ type: "end-game" });
+      if (
+        (clicked == "first" && pair[0].population < pair[1].population) ||
+        (clicked == "second" && pair[1].population < pair[0].population)
+      ) {
+        dispatch({ type: "end-game", payload: { hasBeenWon: false } });
+        await sleep(2000);
+        setShowGameEndScreen(true);
+        return;
+      }
+
+      if (index == 0) {
+        dispatch({ type: "end-game", payload: { hasBeenWon: true } });
+        setShowPopulation(true);
+        await sleep(2000);
+        setShowGameEndScreen(true);
+        return;
+      }
+
+      dispatch({ type: "add-one-point" });
       await sleep(2000);
-      setShowGameEndScreen(true);
-      return;
-    }
-
-    dispatch({ type: "add-one-point" });
-    await sleep(2000);
-    setShowPopulation(false);
-    swiperRef.current?.swiper.slidePrev();
-  }, []);
+      setShowPopulation(false);
+      swiperRef.current?.swiper.slidePrev();
+    },
+    []
+  );
 
   const handlePlayAgain = useCallback(async () => {
     dispatch({ type: "play-again" });
@@ -56,8 +70,10 @@ export default function HigherPopulation() {
     setShowGameEndScreen(false);
   }, []);
 
-  if (isLoading) return <LoadingPage />;
-  if (error || !data) return <ErrorPage />;
+  if (gameState.isGameHasBeenWon) console.log("WON!!!");
+
+  if (isLoading) return <LoadingPageLayout />;
+  if (error || !data) return <ErrorPageLayout />;
 
   return (
     <main className="h-screen w-full overflow-hidden relative">
@@ -76,12 +92,12 @@ export default function HigherPopulation() {
                 <CountryHalfSlide
                   country={countriesPair[0]}
                   showPopulation={showPopulation}
-                  onClick={() => handleCountryClick(countriesPair, "first")}
+                  onClick={() => handleCountryClick(countriesPair, "first", index)}
                 />
                 <CountryHalfSlide
                   country={countriesPair[1]}
                   showPopulation={showPopulation}
-                  onClick={() => handleCountryClick(countriesPair, "second")}
+                  onClick={() => handleCountryClick(countriesPair, "second", index)}
                 />
               </div>
             </SwiperSlide>
@@ -113,14 +129,18 @@ export default function HigherPopulation() {
           <div className="absolute absolute-center z-10">
             <motion.div
               className={`relative h-[100px] w-[100px] rounded-full ${
-                gameState.isGameEnded ? "bg-red-500" : "bg-green-500"
+                gameState.isGameEnded && !gameState.isGameHasBeenWon ? "bg-red-500" : "bg-green-500"
               }`}
               initial={{ scale: 0.25 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0, transition: { duration: 0.1 } }}
               transition={{ duration: 0.75 }}>
               <div className="absolute absolute-center text-white">
-                {gameState.isGameEnded ? <XMarkIcon className="h-14" /> : <CheckIcon className="w-14" />}
+                {gameState.isGameEnded && !gameState.isGameHasBeenWon ? (
+                  <XMarkIcon className="h-14" />
+                ) : (
+                  <CheckIcon className="w-14" />
+                )}
               </div>
             </motion.div>
           </div>
@@ -136,7 +156,9 @@ export default function HigherPopulation() {
               transition={{ duration: 0.25 }}
               className="primary-layout bg-gray-800 bg-opacity-95 p-8 w-[90%] max-w-[500px] h-[450px] max-h-[90%] flex flex-col justify-between items-center">
               <div className="flex flex-col gap-2">
-                <h2 className="text-3xl lg:text-5xl font-semibold text-center">GAME OVER</h2>
+                <h2 className="text-3xl lg:text-5xl font-semibold text-center">
+                  {gameState.isGameHasBeenWon ? "ZWYCIĘSTWO" : "GAME OVER"}
+                </h2>
                 {gameState.isCurrentScoreNewBest && (
                   <p className="font-semibold uppercase text-md lg:text-xl border w-full text-center p-1 rounded">
                     Nowy najlepszy wynik!! 🥳
