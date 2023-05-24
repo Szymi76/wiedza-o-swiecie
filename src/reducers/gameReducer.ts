@@ -1,3 +1,5 @@
+"use client";
+
 import { produce, Draft } from "immer";
 
 type GameState = {
@@ -18,15 +20,18 @@ type GameActions =
 const createLSBestScoreKey = (gameName: string) => `${gameName}__best-score`;
 
 export function createInitialGameState(gameName: string): GameState {
-  const localStorageKey = createLSBestScoreKey(gameName);
-  const storedBestScore = localStorage.getItem(localStorageKey);
   let bestScore = 0;
 
-  if (storedBestScore) {
-    const parsedBestScore = JSON.parse(storedBestScore);
-    if (typeof parsedBestScore == "number") bestScore = parsedBestScore;
-  } else {
-    localStorage.setItem(localStorageKey, JSON.stringify(0));
+  if (typeof window !== "undefined") {
+    const localStorageKey = createLSBestScoreKey(gameName);
+    const storedBestScore = localStorage.getItem(localStorageKey);
+
+    if (storedBestScore) {
+      const parsedBestScore = JSON.parse(storedBestScore);
+      if (typeof parsedBestScore == "number") bestScore = parsedBestScore;
+    } else {
+      localStorage.setItem(localStorageKey, JSON.stringify(0));
+    }
   }
 
   return {
@@ -49,7 +54,9 @@ export const gameReducer = produce((draft: Draft<GameState>, action: GameActions
         const localStorageKey = createLSBestScoreKey(draft.gameName);
         draft.isCurrentScoreNewBest = true;
         draft.bestScore = draft.currentScore;
-        localStorage.setItem(localStorageKey, JSON.stringify(draft.bestScore));
+        if (typeof window !== "undefined") {
+          localStorage.setItem(localStorageKey, JSON.stringify(draft.bestScore));
+        }
       }
       break;
     }

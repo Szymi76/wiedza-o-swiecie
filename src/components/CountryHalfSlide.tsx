@@ -3,7 +3,7 @@ import Image from "next/image";
 import CountUp from "react-countup";
 
 type CountryHalfSlideProps = { country: Country; showPopulation: boolean; onClick: () => void };
-export function CountryHalfSlide(props: CountryHalfSlideProps) {
+export default function CountryHalfSlide(props: CountryHalfSlideProps) {
   return (
     <div className="h-full w-full lg:w-1/2 relative group cursor-pointer" onClick={props.onClick}>
       <Image

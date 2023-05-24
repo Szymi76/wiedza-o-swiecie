@@ -1,6 +1,6 @@
 import { Country } from "@/types";
 
-export function generateRandomCountriesPairs(countries: Country[]) {
+export default function generateRandomCountriesPairs(countries: Country[]) {
   let array = [...countries];
   const pairs: [Country, Country][] = [];
 
