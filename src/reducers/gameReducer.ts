@@ -70,6 +70,7 @@ export const gameReducer = produce((draft: Draft<GameState>, action: GameActions
       draft.gameNumber = draft.gameNumber + 1;
       draft.isGameEnded = false;
       draft.isGameHasBeenWon = false;
+      draft.isCurrentScoreNewBest = false;
       break;
     }
   }

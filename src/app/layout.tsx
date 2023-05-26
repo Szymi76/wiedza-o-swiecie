@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Wiedza o świecie",
+  title: "Większa populacja",
   description: "Gra oparta na danych i statystykach o miastach, krajach i kontynentach.",
 };
 

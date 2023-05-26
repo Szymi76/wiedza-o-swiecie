@@ -1,3 +1,5 @@
+"use client";
+
 import { Country } from "@/types";
 import Image from "next/image";
 import CountUp from "react-countup";
@@ -5,7 +7,7 @@ import CountUp from "react-countup";
 type CountryHalfSlideProps = { country: Country; showPopulation: boolean; onClick: () => void };
 export default function CountryHalfSlide(props: CountryHalfSlideProps) {
   return (
-    <div className="h-full w-full lg:w-1/2 relative group cursor-pointer" onClick={props.onClick}>
+    <div className="h-[50vh] lg:h-full w-full lg:w-1/2 relative group cursor-pointer" onClick={props.onClick}>
       <Image
         src={props.country.flags.svg}
         height={100}
@@ -14,9 +16,9 @@ export default function CountryHalfSlide(props: CountryHalfSlideProps) {
         className="h-full w-full object-cover"
       />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-800 bg-opacity-90 rounded-lg p-4 flex flex-col gap-3 justify-center items-center">
-        <h3 className="font-medium text-2xl text-center text-white">{props.country.name.common}</h3>
+        <h3 className="font-medium text-3xl text-center text-white">{props.country.name.common}</h3>
         {!props.showPopulation ? (
-          <button className="bg-white rounded-md px-5 py-1.5 font-semibold border-2 border-transparent group-hover:bg-green-500 group-hover:text-white group-hover:border-white group-hover:scale-95 duration-150 ">
+          <button className="btn group-hover:bg-green-600 group-hover:text-white group-hover:scale-95 group-hover:translate-y-[2px]">
             Wybierz
           </button>
         ) : (
